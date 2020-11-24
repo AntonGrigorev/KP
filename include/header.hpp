@@ -5,7 +5,6 @@
 #define INCLUDE_HEADER_HPP_
 
 class function_plot_drawer {
-	std::vector<std::pair<double, double>> coordinates;
 	unsigned int x_size = 1000;
 	unsigned int y_size = 800;
     unsigned int marker_size = 3;
@@ -14,19 +13,18 @@ class function_plot_drawer {
     unsigned int new_center_y = y_size / 2;
     int border = 0;
 
-	double limit_x0;
-	double limit_x1;
-	double limit_y0;
-	double limit_y1;
+    double limit_x0;
+    double limit_x1;
+    double limit_y0;
+    double limit_y1;
 
 	double step_x = 1;
 	double step_y = 1;
 
-    double scaling_factor_x = (x_size - 2 * border) / (limit_x1 - limit_x0); //Пиксел в натуре
-    double scaling_factor_y = (y_size - 2 * border) / (limit_y1 - limit_y0);
 public:
 
 	void main_cicle(std::string& x, std::string& y) {
+        std::vector<std::pair<double, double>> coordinates;
         std::string tmp;
         std::vector<int> x_vec, y_vec;
         //Извлечь x
@@ -173,6 +171,8 @@ public:
             text.setPosition(new_center_x - 15, border);
             window.draw(text);
 
+            double scaling_factor_x = (x_size - 2 * border) / (limit_x1 - limit_x0);
+            double scaling_factor_y = (y_size - 2 * border) / (limit_y1 - limit_y0);
             sf::Color color_graph(255, 0, 0);
             for (int i = 0; i < coordinates.size(); i++) {
                 double point_x = (coordinates[i].first - limit_x0) * scaling_factor_x + border;
