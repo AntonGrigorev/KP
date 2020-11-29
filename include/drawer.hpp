@@ -1,8 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <algorithm>
-#ifndef INCLUDE_HEADER_HPP_
+#ifndef INCLUDE_DRAWER_HPP_
 
-#define INCLUDE_HEADER_HPP_
+#define INCLUDE_DRAWER_HPP_
 
 class function_plot_drawer {
 	unsigned int x_size = 1000;
@@ -29,7 +29,7 @@ public:
         std::vector<int> x_vec, y_vec;
         //Извлечь x
         for (int i = 0; i < x.size(); i++) {
-            if (std::isdigit(x[i])) {
+            if (std::isdigit(x[i]) || x[i] == '-') {
                 tmp.push_back(x[i]);
                 if (x[i + 1] == ' ' || i + 1 >= x.size()) {
                     x_vec.push_back(std::stod(tmp));
@@ -42,7 +42,7 @@ public:
         }
         //Извлечь y
         for (int i = 0; i < y.size(); i++) {
-            if (std::isdigit(y[i])) {
+            if (std::isdigit(y[i]) || y[i] == '-') {
                 tmp.push_back(y[i]);
                 if (y[i + 1] == ' ' || i + 1 >= y.size() || y[i + 1] == '\n') {
                     y_vec.push_back(std::stod(tmp));
@@ -199,4 +199,4 @@ public:
 	}
 };
 
-#endif // INCLUDE_HEADER_HPP_
+#endif // INCLUDE_DRAWER_HPP_
