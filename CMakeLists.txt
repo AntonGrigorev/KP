@@ -14,7 +14,7 @@ set(CMAKE_AUTOMOC ON)
 
 project(kp)
 
-find_package(SFML REQUIRED COMPONENTS system window graphics network)
+find_package(SFML REQUIRED COMPONENTS system window graphics)
 
 find_package(Tesseract CONFIG REQUIRED)
 
@@ -26,7 +26,8 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 
 add_executable(main
 ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/source/ui.cpp)
+${CMAKE_CURRENT_SOURCE_DIR}/source/ui.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/source/drawer.cpp)
 
 
 target_include_directories(main
@@ -36,7 +37,7 @@ PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(main PRIVATE libtesseract)
 
-target_link_libraries(main PRIVATE sfml-system sfml-window sfml-graphics sfml-network)
+target_link_libraries(main PRIVATE sfml-system sfml-window sfml-graphics)
 
 target_link_libraries(main PRIVATE ${Qt5Gui_LIBRARIES})
 
