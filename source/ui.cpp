@@ -19,10 +19,16 @@ void Win::clicked_choose() {
 	QString path_ = QFileDialog::getOpenFileName(this, QObject::tr("Choose file"), QDir::homePath(),
 		QObject::tr("Photo (*.png);;All files (*.*)"));
 	this->set_path(path_);
-    this->photo_processing();
-    if (!(this->is_error())) {
-        drawer object;
-        object.cicle(data.first, data.second);
+    if (!(path_.isEmpty())) {
+        this->photo_processing();
+        if (!(this->is_error())) {
+            drawer object;
+            object.cicle(data.first, data.second);
+        }
+    }
+    else {
+        QMessageBox::information(this, tr("Error"),
+            tr("Path is not selected. Try again."));
     }
 }
 
@@ -46,7 +52,7 @@ void Win::photo_processing() {
     std::string path_to_photo = get_path().toUtf8().constData();
     std::string outText;
     tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
-    if (api->Init("C:\\src\\vcpkg\\buildtrees\\tesseract\\src\\4.1.1-1402ed03b0.clean\\tessdata", "eng")) {
+    if (api->Init("..\\..\\..\\files\\tessdata\\", "eng")) {
         this->error_occured();
         QMessageBox::information(this, tr("Error"),
             tr("Could not initialize tesseract."));
@@ -63,12 +69,13 @@ void Win::photo_processing() {
            if ((outText[i] != '-') && (outText[i] != ' ') && (outText[i] != '\n') && (outText[i] != '.')) {
                this->error_occured();
                QMessageBox::information(this, tr("Error"),
-                   tr("Input is not a number or Tesseract interpretted it wrong. Try again."));
+                   tr("Input is not a number or Tesseract interpretted it wrong. Try again. Input is:\n") + QString::fromStdString(outText));
                return;
            }
        }
     }
-    std::cout << "Input is: " << std::endl << outText << std::endl << std::endl;
+    QMessageBox::information(this, tr("Input"),
+        tr("Input is: \n") + QString::fromStdString(outText));
 
     std::string x, y, tmp;
     std::vector<double> x_vec, y_vec;
@@ -102,11 +109,14 @@ void Win::photo_processing() {
         std::cout << "That is y " << y << std::endl;
         this->error_occured();
         QMessageBox::information(this, tr("Error"),
-             tr("X vector is no equal to Y vector. Try again."));
+             tr("X vector size is no equal to Y vector size. Try again.\n") + 
+            "That is x: " + QString::fromStdString(x) + "\n" +
+            "That is y " + QString::fromStdString(y));
         return;
     }
-    std::cout << "That is x " << x << std::endl << std::endl;
-    std::cout << "That is y " << y << std::endl << std::endl;
+    QMessageBox::information(this, tr("X and Y"),
+        tr("That is x: ") + QString::fromStdString(x) + "\n" +
+        "That is y: " + QString::fromStdString(y));
     data = std::make_pair(x_vec, y_vec);
 }
 

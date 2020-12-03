@@ -5,6 +5,7 @@ void drawer::cicle(const std::vector<double>& x_vec_, const std::vector<double>&
     y_vec = y_vec_;
     sf::RenderWindow window(sf::VideoMode(x_size, y_size), "Function plot");
     set_limits();
+    set_step();
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -17,6 +18,11 @@ void drawer::cicle(const std::vector<double>& x_vec_, const std::vector<double>&
     }
 }
 
+void drawer::set_step() {
+    step_x = (limit_x1 - limit_x0) / count_marker_x;
+    step_y = (limit_y1 - limit_y0) / count_marker_y;
+}
+
 void drawer::set_limits() {
     for (int i = 0; i < x_vec.size(); i++) {
         coordinates.push_back(std::make_pair(x_vec[i], y_vec[i]));
@@ -24,37 +30,47 @@ void drawer::set_limits() {
 
     auto temp = std::max_element(coordinates.begin(), coordinates.end(),
         [](const auto& a, const auto& b) {
-            return abs(a.first) < abs(b.first);
+            return a.first < b.first;
         });
-    int mod_x = abs(ceil((*temp).first));
+    double max_x = ceil((*temp).first * 1000) / 1000 ;
+    max_x += 0.05 * max_x;
+
+    temp = std::min_element(coordinates.begin(), coordinates.end(),
+        [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        });
+    double min_x = floor((*temp).first * 1000) / 1000;
+    min_x += 0.05 * min_x;
 
     temp = std::max_element(coordinates.begin(), coordinates.end(),
         [](const auto& a, const auto& b) {
-            return abs(a.second) < abs(b.second);
+            return a.second < b.second;
         });
-    int mod_y = abs(ceil((*temp).second));
+    double max_y = ceil((*temp).second * 1000) / 1000;
+    max_y += 0.05 * max_y;
 
-    if (mod_y > mod_x) {
-        while (mod_y % 10 != 0)
-        {
-            mod_y++;
-        }
-        if (mod_y == 0) {
-            limit_x1 = limit_y1 = 5;
-        }
-        limit_x1 = limit_y1 = mod_y;
-        limit_x0 = limit_y0 = -mod_y;
+    temp = std::min_element(coordinates.begin(), coordinates.end(),
+        [](const auto& a, const auto& b) {
+            return a.second < b.second;
+        });
+    double min_y = floor((*temp).second * 1000) / 1000;
+    min_y += 0.05 * min_y;
+
+    if (abs(max_x) > abs(min_x)) {
+        limit_x0 = -max_x;
+        limit_x1 = max_x;
     }
     else {
-        while (mod_x % 10 != 0)
-        {
-            mod_x++;
-        }
-        if (mod_x == 0) {
-            limit_x1 = limit_y1 = 5;
-        }
-        limit_x1 = limit_y1 = mod_x;
-        limit_x0 = limit_y0 = -mod_x;
+        limit_x0 = min_x;
+        limit_x1 = -min_x;
+    }
+    if (abs(max_y) > abs(min_y)) {
+        limit_y0 = -max_y;
+        limit_y1 = max_y;
+    }
+    else {
+        limit_y0 = min_y;
+        limit_y1 = -min_y;
     }
 }
 
@@ -73,8 +89,8 @@ void drawer::draw_plate(sf::RenderWindow& window) {
     window.draw(line);
 
     sf::Font font;
-    if (!font.loadFromFile("D:\\Github\\arial.ttf")) {
-        std::cout << "Ошибка чтения шрифта" << std::endl;
+    if (!font.loadFromFile("..\\..\\..\\files\\font\\arial.ttf")) {
+        std::cout << "Font reading error" << std::endl;
     }
 
     sf::Text text;
@@ -82,13 +98,10 @@ void drawer::draw_plate(sf::RenderWindow& window) {
     text.setFillColor(sf::Color(0, 0, 0));
     text.setFont(font);
 
-    double count_marker_y = limit_y1 - limit_y0 / step_y;
     double len_axis_y = y_size;
     for (double u = 0; u <= count_marker_y; u++) {
         //Текст
-        int var = limit_y0 + (count_marker_y - u) * step_y;
-        std::string s = std::to_string(var);
-        text.setString(s);
+        text.setString(std::to_string(limit_y1 - u * step_y));
         text.setPosition(new_center_x + 15, len_axis_y / count_marker_y * u - 10);
         window.draw(text);
 
@@ -100,13 +113,10 @@ void drawer::draw_plate(sf::RenderWindow& window) {
     }
 
     //Разметка горизонтальной оси
-    double count_marker_x = limit_x1 - limit_x0 / step_x;
     double len_axis_x = x_size;
-    for (double u = 0; u <= count_marker_x; ++u) {
+    for (double u = 0; u <= count_marker_x; u++) {
         //Текст
-        int var = limit_x0 + u * step_x;
-        std::string s = std::to_string(var);
-        text.setString(s);
+        text.setString(std::to_string(limit_x0 + u * step_x));
         text.setPosition(len_axis_x / count_marker_x * u, new_center_y + 15);
         window.draw(text);
         //Вспомогательные линии сетки
@@ -153,49 +163,3 @@ void drawer::calculate_scaling() {
     scaling_factor_x = (x_size) / (limit_x1 - limit_x0);
     scaling_factor_y = (y_size) / (limit_y1 - limit_y0);
 }
-
-/*void drawer::set_limits() {
-    auto temp = std::max_element(coordinates.begin(), coordinates.end(),
-        [](const auto& a, const auto& b) {
-            return abs(a.first) < abs(b.first);
-        });
-    double x_max = (*temp).first;
-
-    temp = std::max_element(coordinates.begin(), coordinates.end(),
-        [](const auto& a, const auto& b) {
-            return abs(a.second) < abs(b.second);
-        });
-    double y_max = ceil((*temp).second);
-
-    temp = std::min_element(coordinates.begin(), coordinates.end(),
-        [](const auto& a, const auto& b) {
-            return abs(a.second) > abs(b.second);
-        });
-    double x_min = (*temp).first;
-
-    temp = std::min_element(coordinates.begin(), coordinates.end(),
-        [](const auto& a, const auto& b) {
-            return abs(a.second) > abs(b.second);
-        });
-    double y_min = floor((*temp).second);
-}
-
-void drawer::calculate_step() {
-    step_x = (x_max - x_min) / (coordinates.size() - 1);
-    step_y = (y_max - y_min) / (coordinates.size() - 1);
-}
-
-void drawer::scaled_vectors() {
-    for (int i = 0; i < x_vec.size(); i++) {
-        x_vec_scaled.push_back(x_vec[i] + step_x);
-    }
-    for (int i = 0; i < y_vec.size(); i++) {
-        y_vec_scaled.push_back(y_vec[i] + step_y);
-    }
-}
-
-void drawer::calculate_scaling() {
-    scaling_factor_x = (x_max - x_min) / x_size;
-    scaling_factor_y = (y_max - y_min) / y_size;
-} */
-

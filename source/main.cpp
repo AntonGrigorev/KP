@@ -8,15 +8,9 @@
 #include <QApplication>
 
 int main(int argc, char* argv[]) {
-    try {
-        QApplication app(argc, argv);
-        Win win(0);
-        win.resize(150, 150);
-        win.show();
-        return app.exec();
-    }
-    catch (std::exception& err) {
-        std::cout << err.what() << std::endl;
-        return 1;
-    }
+    QApplication app(argc, argv);
+    Win win(0);
+    win.resize(150, 150);
+    win.show();
+    return app.exec();
 }

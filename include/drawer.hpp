@@ -18,17 +18,16 @@ class drawer {
     double limit_y0;
     double limit_y1;
 
-	double step_x = 1;
-	double step_y = 1;
-    int count_segment = 15;
+	double step_x;
+	double step_y;
+    double count_marker_y = 20;
+    double count_marker_x = 20;
 
     double scaling_factor_x;
     double scaling_factor_y;
 
     std::vector<double> x_vec;
     std::vector<double> y_vec;
-    std::vector<double> x_vec_scaled;
-    std::vector<double> y_vec_scaled;
     std::vector<std::pair<double, double>> coordinates;
 public:
     void cicle(const std::vector<double>& x_vec_, const std::vector<double>& y_vec_);
@@ -36,8 +35,7 @@ public:
     void draw_plate(sf::RenderWindow& window); 
     void draw_curve(sf::RenderWindow& window);
     void calculate_scaling();
-    //void calculate_step();
-   // void scaled_vectors();
+    void set_step();
 };
 
 #endif // INCLUDE_DRAWER_HPP_
