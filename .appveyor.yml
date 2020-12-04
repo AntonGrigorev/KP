@@ -30,13 +30,13 @@ build_script:
   - mkdir build
   - cd build
   - cmake .. "-DCMAKE_TOOLCHAIN_FILE=C:\Tools\vcpkg\vcpkg-export-20201130-003734\scripts\buildsystems\vcpkg.cmake"
-  - cmake --build .
+  - cmake --build .  --config Release
 #  - build\Debug\main.exe
   - echo "Testing_1 main is done"
  
  
 artifacts:
-#- path: /.*\.exe/
+- path:  build/Release/*.exe
  
 #deploy:
 #- provider: GitHub
