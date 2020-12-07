@@ -65,28 +65,28 @@ void drawer::set_limits_lin() {
         [](const auto& a, const auto& b) {
             return a.first < b.first;
         });
-    double max_x = ceil((*temp).first * 1000) / 1000 ;
+    double max_x = std::ceil((*temp).first * 1000) / 1000 ;
     max_x += 0.05 * max_x;
 
     temp = std::min_element(coordinates.begin(), coordinates.end(),
         [](const auto& a, const auto& b) {
             return a.first < b.first;
         });
-    double min_x = floor((*temp).first * 1000) / 1000;
+    double min_x = std::floor((*temp).first * 1000) / 1000;
     min_x += 0.05 * min_x;
 
     temp = std::max_element(coordinates.begin(), coordinates.end(),
         [](const auto& a, const auto& b) {
             return a.second < b.second;
         });
-    double max_y = ceil((*temp).second * 1000) / 1000;
+    double max_y = std::ceil((*temp).second * 1000) / 1000;
     max_y += 0.05 * max_y;
 
     temp = std::min_element(coordinates.begin(), coordinates.end(),
         [](const auto& a, const auto& b) {
             return a.second < b.second;
         });
-    double min_y = floor((*temp).second * 1000) / 1000;
+    double min_y = std::floor((*temp).second * 1000) / 1000;
     min_y += 0.05 * min_y;
 
     if (abs(max_x) > abs(min_x)) {
@@ -249,11 +249,11 @@ double drawer::calculate_point_y_lin(const std::vector<std::pair<double, double>
 }
 
 double drawer::calculate_point_x_log(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
-    return  (log10(coordinates[i].first - limit_x0)) * scaling_factor_x;
+    return  (std::log10(coordinates[i].first - limit_x0)) * scaling_factor_x;
 }
 
 double drawer::calculate_point_y_log(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
-    return y_size + (log10(limit_y0 - coordinates[i].second)) * scaling_factor_y;
+    return y_size + (std::log10(limit_y0 - coordinates[i].second)) * scaling_factor_y;
 }
 
 void drawer::calculate_scaling() {
