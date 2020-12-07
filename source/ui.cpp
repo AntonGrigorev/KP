@@ -1,6 +1,7 @@
 #include "ui.hpp"
 
  Win::Win(QWidget* parent) :QWidget(parent) {
+    //Menu
 	setWindowTitle("Plot builder");
 	label = new QLabel("Choose a photo with digits or press the exit button", this);
 	exitButton = new QPushButton("Exit", this);
@@ -22,8 +23,11 @@ void Win::clicked_choose() {
     if (!(path_.isEmpty())) {
         this->photo_processing();
         if (!(this->is_error())) {
-            drawer object;
-            object.cicle(data.first, data.second);
+            //Вызов выбора типа
+            AnotherWin AnWin;
+            AnWin.set_data(get_data());
+            AnWin.show();
+            AnWin.exec();
         }
     }
     else {
@@ -46,6 +50,10 @@ void Win::set_path(const QString& path_) {
 
 QString Win::get_path() {
     return path;
+}
+
+std::pair<std::vector<double>, std::vector<double>> Win::get_data() {
+    return data;
 }
 
 void Win::photo_processing() {
@@ -118,6 +126,38 @@ void Win::photo_processing() {
         tr("That is x: ") + QString::fromStdString(x) + "\n" +
         "That is y: " + QString::fromStdString(y));
     data = std::make_pair(x_vec, y_vec);
+}
+
+AnotherWin::AnotherWin(QWidget* parent) {
+    //Выбор типа графа
+    setWindowTitle("Graph type");
+    label1 = new QLabel("Choose a type of graph to be build", this);
+    linearButton = new QPushButton("Linear graph", this);
+    logButton = new QPushButton("Logarithmic graph", this);
+    QHBoxLayout* layout1 = new QHBoxLayout(this);
+    layout1->addWidget(label1);
+    layout1->addWidget(linearButton);
+    layout1->addWidget(logButton);
+    connect(linearButton, SIGNAL(clicked(bool)),
+        this, SLOT(clicked_linear()));
+    connect(logButton, SIGNAL(clicked(bool)),
+        this, SLOT(clicked_log()));
+}
+
+void AnotherWin::clicked_linear() {
+    drawer object;
+    object.set_linear();
+    object.cicle(data_.first, data_.second);
+}
+
+void AnotherWin::clicked_log() {
+    drawer object;
+    object.set_log();
+    object.cicle(data_.first, data_.second);
+}
+
+void AnotherWin::set_data(const std::pair<std::vector<double>, std::vector<double>>& data1) {
+    data_ = data1;
 }
 
 #include "moc_ui.cpp"

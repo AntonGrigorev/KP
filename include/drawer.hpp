@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <iostream>
+#include <array>
+#include <vector>
 #ifndef INCLUDE_DRAWER_HPP_
 
 #define INCLUDE_DRAWER_HPP_
@@ -13,29 +15,45 @@ class drawer {
     unsigned int new_center_x = x_size / 2;
     unsigned int new_center_y = y_size / 2;
 
-    double limit_x0;
-    double limit_x1;
-    double limit_y0;
-    double limit_y1;
+    double limit_x0 = 0;
+    double limit_x1 = 0;
+    double limit_y0 = 0;
+    double limit_y1 = 0;
 
-	double step_x;
-	double step_y;
-    double count_marker_y = 20;
-    double count_marker_x = 20;
+	double step_x_lin = 0;
+	double step_y_lin = 0;
+    std::array<double, 5> step_x_log;
+    std::array<double, 5> step_y_log;
 
-    double scaling_factor_x;
-    double scaling_factor_y;
+    double count_marker_y = 0;
+    double count_marker_x = 0;
+
+    double scaling_factor_x = 0;
+    double scaling_factor_y = 0;
 
     std::vector<double> x_vec;
     std::vector<double> y_vec;
     std::vector<std::pair<double, double>> coordinates;
+
+    bool linear = false;
+    bool log = false;
 public:
     void cicle(const std::vector<double>& x_vec_, const std::vector<double>& y_vec_);
-    void set_limits();
+    void set_limits_lin();
+    void set_limits_log();
     void draw_plate(sf::RenderWindow& window); 
     void draw_curve(sf::RenderWindow& window);
     void calculate_scaling();
-    void set_step();
+    double calculate_point_x_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i);
+    double calculate_point_y_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i);
+    double calculate_point_x_log(const std::vector<std::pair<double, double>>& coordinates, const int& i);
+    double calculate_point_y_log(const std::vector<std::pair<double, double>>& coordinates, const int& i);
+    void set_step_lin();
+    void set_step_log();
+    void set_count_marker_linear();
+    void set_count_marker_log();
+    void set_linear();
+    void set_log();
 };
 
 #endif // INCLUDE_DRAWER_HPP_

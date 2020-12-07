@@ -3,9 +3,20 @@
 void drawer::cicle(const std::vector<double>& x_vec_, const std::vector<double>& y_vec_) {
     x_vec = x_vec_;
     y_vec = y_vec_;
+    for (int i = 0; i < x_vec.size(); i++) {
+        coordinates.push_back(std::make_pair(x_vec[i], y_vec[i]));
+    }
     sf::RenderWindow window(sf::VideoMode(x_size, y_size), "Function plot");
-    set_limits();
-    set_step();
+    if (linear == true) {
+        set_limits_lin();
+        set_count_marker_linear();
+        set_step_lin();
+    }
+    else {
+        set_limits_log();
+        set_count_marker_log();
+        set_step_log();
+    }
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -18,16 +29,38 @@ void drawer::cicle(const std::vector<double>& x_vec_, const std::vector<double>&
     }
 }
 
-void drawer::set_step() {
-    step_x = (limit_x1 - limit_x0) / count_marker_x;
-    step_y = (limit_y1 - limit_y0) / count_marker_y;
+void drawer::set_step_lin() {
+    step_x_lin = (limit_x1 - limit_x0) / count_marker_x;
+    step_y_lin = (limit_y1 - limit_y0) / count_marker_y;
 }
 
-void drawer::set_limits() {
-    for (int i = 0; i < x_vec.size(); i++) {
-        coordinates.push_back(std::make_pair(x_vec[i], y_vec[i]));
+void drawer::set_step_log() {
+    for (double i = 0; i < step_x_log.size(); i++) {
+        step_x_log[i] = i;
+        if (i > 1) {
+            step_x_log[i] = step_x_log[i - 1] * 10;
+        }
     }
 
+    for (double i = 0; i < step_y_log.size(); i++) {
+        step_y_log[i] = i;
+        if (i > 1) {
+            step_y_log[i] = step_y_log[i - 1] * 10;
+        }
+    }
+}
+
+void drawer::set_count_marker_linear() {
+    count_marker_y = 20;
+    count_marker_x = 20;
+}
+
+void drawer::set_count_marker_log() {
+    count_marker_y = 8;
+    count_marker_x = 8;
+}
+
+void drawer::set_limits_lin() {
     auto temp = std::max_element(coordinates.begin(), coordinates.end(),
         [](const auto& a, const auto& b) {
             return a.first < b.first;
@@ -74,6 +107,11 @@ void drawer::set_limits() {
     }
 }
 
+void drawer::set_limits_log() {
+    limit_x1 = limit_y1 = 1000;
+    limit_x0 = limit_y0 = -1000;
+}
+
 void drawer::draw_plate(sf::RenderWindow& window) {
     window.clear(sf::Color(255, 255, 255, 0));
     //Оси
@@ -99,9 +137,20 @@ void drawer::draw_plate(sf::RenderWindow& window) {
     text.setFont(font);
 
     double len_axis_y = y_size;
-    for (double u = 0; u <= count_marker_y; u++) {
+    for (int u = 0; u <= count_marker_y; u++) {
         //Текст
-        text.setString(std::to_string(limit_y1 - u * step_y));
+        if (linear == true) {
+            text.setString(std::to_string(limit_y1 - u * step_y_lin));
+        }
+        else {
+            if (u < 4) {
+                text.setString(std::to_string(step_x_log[4 - u]));
+            }
+            else {
+                text.setString(std::to_string(-step_x_log[u - 4]));
+            }
+        }
+        //text.setString(std::to_string(limit_y1 - u * step_y_lin));
         text.setPosition(new_center_x + 15, len_axis_y / count_marker_y * u - 10);
         window.draw(text);
 
@@ -114,9 +163,20 @@ void drawer::draw_plate(sf::RenderWindow& window) {
 
     //Разметка горизонтальной оси
     double len_axis_x = x_size;
-    for (double u = 0; u <= count_marker_x; u++) {
+    for (int u = 0; u <= count_marker_x; u++) {
         //Текст
-        text.setString(std::to_string(limit_x0 + u * step_x));
+        if (linear == true) {
+            text.setString(std::to_string(limit_x0 + u * step_x_lin));
+        }
+        else {
+            if (u < 4) {
+                text.setString(std::to_string(-step_x_log[4 - u]));
+            }
+            else {
+                text.setString(std::to_string(step_x_log[u - 4]));
+            }
+        }
+        //text.setString(std::to_string(limit_x0 + u * step_x_lin));
         text.setPosition(len_axis_x / count_marker_x * u, new_center_y + 15);
         window.draw(text);
         //Вспомогательные линии сетки
@@ -125,7 +185,6 @@ void drawer::draw_plate(sf::RenderWindow& window) {
         line.setSize(sf::Vector2f(1, y_size));
         window.draw(line);
     }
-
     //X
     text.setCharacterSize(20);
     text.setString("X");
@@ -140,26 +199,71 @@ void drawer::draw_plate(sf::RenderWindow& window) {
 void drawer::draw_curve(sf::RenderWindow& window) {
     calculate_scaling();
     sf::Color color_graph(255, 0, 0);
-    for (int i = 0; i < coordinates.size(); i++) {
-        double point_x = (coordinates[i].first - limit_x0) * scaling_factor_x;
-        double point_y = y_size + (limit_y0 - coordinates[i].second) * scaling_factor_y;
-        sf::CircleShape shape(marker_size);
-        shape.setPosition(point_x - marker_size, point_y - marker_size);
-        shape.setFillColor(color_graph);
-        window.draw(shape);
-        if (i > 0) {
-            sf::VertexArray lines(sf::LinesStrip, 2);
-            lines[0].position = sf::Vector2f(point_x, point_y);
-            lines[0].color = sf::Color::Red;
-            lines[1].position = sf::Vector2f((coordinates[i - 1].first - limit_x0) * scaling_factor_x,
-                y_size + (limit_y0 - coordinates[i - 1].second) * scaling_factor_y);
-            lines[1].color = sf::Color::Red;
-            window.draw(lines);
+    if (linear == true) {
+        for (int i = 0; i < coordinates.size(); i++) {
+            double point_x = calculate_point_x_lin(coordinates, i);
+            double point_y = calculate_point_y_lin(coordinates, i);
+            sf::CircleShape shape(marker_size);
+            shape.setPosition(point_x - marker_size, point_y - marker_size);
+            shape.setFillColor(color_graph);
+            window.draw(shape);
+            if (i > 0) {
+                sf::VertexArray lines(sf::LinesStrip, 2);
+                lines[0].position = sf::Vector2f(point_x, point_y);
+                lines[0].color = sf::Color::Red;
+                lines[1].position = sf::Vector2f(calculate_point_x_lin(coordinates, i - 1),
+                    calculate_point_y_lin(coordinates, i - 1));
+                lines[1].color = sf::Color::Red;
+                window.draw(lines);
+            }
         }
     }
+    else {
+        for (int i = 0; i < coordinates.size(); i++) {
+            double point_x = calculate_point_x_log(coordinates, i);
+            double point_y = calculate_point_y_log(coordinates, i);
+            sf::CircleShape shape(marker_size);
+            shape.setPosition(point_x - marker_size, point_y - marker_size);
+            shape.setFillColor(color_graph);
+            window.draw(shape);
+            if (i > 0) {
+                sf::VertexArray lines(sf::LinesStrip, 2);
+                lines[0].position = sf::Vector2f(point_x, point_y);
+                lines[0].color = sf::Color::Red;
+                lines[1].position = sf::Vector2f(calculate_point_x_log(coordinates, i - 1),
+                    calculate_point_y_log(coordinates, i - 1));
+                lines[1].color = sf::Color::Red;
+                window.draw(lines);
+            }
+        }
+    }
+}
+
+//Точки в линейном и логарифмическом маштабе
+double drawer::calculate_point_x_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
+    return (coordinates[i].first - limit_x0) * scaling_factor_x;
+}
+
+double drawer::calculate_point_y_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
+    return y_size + (limit_y0 - coordinates[i].second) * scaling_factor_y;
+}
+
+double drawer::calculate_point_x_log(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
+    return  (log10(coordinates[i].first - limit_x0)) * scaling_factor_x;
+}
+
+double drawer::calculate_point_y_log(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
+    return y_size + (log10(limit_y0 - coordinates[i].second)) * scaling_factor_y;
 }
 
 void drawer::calculate_scaling() {
     scaling_factor_x = (x_size) / (limit_x1 - limit_x0);
     scaling_factor_y = (y_size) / (limit_y1 - limit_y0);
+}
+
+void drawer::set_linear() {
+    linear = true;
+}
+void drawer::set_log() {
+    log = true;
 }
