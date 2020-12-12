@@ -56,8 +56,8 @@ void drawer::set_count_marker_linear() {
 }
 
 void drawer::set_count_marker_log() {
-    count_marker_y = 8;
-    count_marker_x = 8;
+    count_marker_y = 6;
+    count_marker_x = 6;
 }
 
 void drawer::set_limits_lin() {
@@ -108,8 +108,8 @@ void drawer::set_limits_lin() {
 }
 
 void drawer::set_limits_log() {
-    limit_x1 = limit_y1 = 1000;
-    limit_x0 = limit_y0 = -1000;
+    limit_x1 = limit_y1 = 100;
+    limit_x0 = limit_y0 = -100;
 }
 
 void drawer::draw_plate(sf::RenderWindow& window) {
@@ -143,11 +143,11 @@ void drawer::draw_plate(sf::RenderWindow& window) {
             text.setString(std::to_string(limit_y1 - u * step_y_lin));
         }
         else {
-            if (u < 4) {
-                text.setString(std::to_string(step_x_log[4 - u]));
+            if (u < count_marker_y / 2) {
+                text.setString(std::to_string(step_y_log[count_marker_y / 2 - u]));
             }
             else {
-                text.setString(std::to_string(-step_x_log[u - 4]));
+                text.setString(std::to_string(-step_y_log[u - count_marker_y / 2]));
             }
         }
         //text.setString(std::to_string(limit_y1 - u * step_y_lin));
@@ -169,11 +169,11 @@ void drawer::draw_plate(sf::RenderWindow& window) {
             text.setString(std::to_string(limit_x0 + u * step_x_lin));
         }
         else {
-            if (u < 4) {
-                text.setString(std::to_string(-step_x_log[4 - u]));
+            if (u < count_marker_x / 2) {
+                text.setString(std::to_string(-step_x_log[count_marker_x / 2 - u]));
             }
             else {
-                text.setString(std::to_string(step_x_log[u - 4]));
+                text.setString(std::to_string(step_x_log[u - count_marker_x / 2]));
             }
         }
         //text.setString(std::to_string(limit_x0 + u * step_x_lin));
@@ -197,7 +197,7 @@ void drawer::draw_plate(sf::RenderWindow& window) {
 }
 
 void drawer::draw_curve(sf::RenderWindow& window) {
-    calculate_scaling();
+    calculate_scaling_lin();
     sf::Color color_graph(255, 0, 0);
     if (linear == true) {
         for (int i = 0; i < coordinates.size(); i++) {
@@ -249,16 +249,51 @@ double drawer::calculate_point_y_lin(const std::vector<std::pair<double, double>
 }
 
 double drawer::calculate_point_x_log(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
-    return  (std::log10(coordinates[i].first - limit_x0)) * scaling_factor_x;
+    double min = 0, max = 0, start = 0;
+    for (int u = 1; u < step_x_log.size(); u++) {
+        if (step_x_log[u] > abs(std::log10(coordinates[i].first))) {
+            max = step_x_log[u];
+            min = step_x_log[u - 1];
+            if (coordinates[i].first > 1) {
+                start = x_size / count_marker_x * (u - 1 + count_marker_x / 2);
+            }
+            else {
+                start = x_size / count_marker_x * (count_marker_y / 2 + 1 - u);
+            }
+            break;
+        }
+    }
+    calculate_scaling_log(max, min);
+    return start + (std::log10(coordinates[i].first) - min) * scaling_factor_x;
 }
 
-double drawer::calculate_point_y_log(const std::vector<std::pair<double, double>>& coordinates, const int& i) {
-    return y_size + (std::log10(limit_y0 - coordinates[i].second)) * scaling_factor_y;
+double drawer::calculate_point_y_log(const std::vector<std::pair<double, double>>& coordinates, const int& i) { 
+    double min = 0, max = 0, start = 0;
+    for (int u = 1; u < step_y_log.size(); u++) {
+        if (step_y_log[u] > abs(std::log10(coordinates[i].second))) {
+            max = step_y_log[u];
+            min = step_y_log[u - 1];
+            if (coordinates[i].second >= 1) {
+                start = y_size / count_marker_y * (count_marker_y / 2 - u);
+            }
+            else {
+                start = y_size / count_marker_y * (count_marker_y / 2 - u + 1);
+            }
+            break;
+        }
+    }
+   calculate_scaling_log(max, min);
+   return start + (max - std::log10(coordinates[i].second))* scaling_factor_y;
 }
 
-void drawer::calculate_scaling() {
+void drawer::calculate_scaling_lin() {
     scaling_factor_x = (x_size) / (limit_x1 - limit_x0);
     scaling_factor_y = (y_size) / (limit_y1 - limit_y0);
+}
+
+void drawer::calculate_scaling_log(const double& max, const double& min) {
+    scaling_factor_x = (x_size / (max - min) / count_marker_x);
+    scaling_factor_y = (y_size / (max - min) / count_marker_y);
 }
 
 void drawer::set_linear() {

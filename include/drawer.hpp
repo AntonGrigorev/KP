@@ -3,6 +3,7 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <cmath>
 #ifndef INCLUDE_DRAWER_HPP_
 
 #define INCLUDE_DRAWER_HPP_
@@ -22,8 +23,8 @@ class drawer {
 
 	double step_x_lin = 0;
 	double step_y_lin = 0;
-    std::array<double, 5> step_x_log;
-    std::array<double, 5> step_y_log;
+    std::array<double, 4> step_x_log;
+    std::array<double, 4> step_y_log;
 
     double count_marker_y = 0;
     double count_marker_x = 0;
@@ -43,7 +44,8 @@ public:
     void set_limits_log();
     void draw_plate(sf::RenderWindow& window); 
     void draw_curve(sf::RenderWindow& window);
-    void calculate_scaling();
+    void calculate_scaling_lin();
+    void calculate_scaling_log(const double& max, const double& min);
     double calculate_point_x_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i);
     double calculate_point_y_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i);
     double calculate_point_x_log(const std::vector<std::pair<double, double>>& coordinates, const int& i);

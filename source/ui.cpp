@@ -23,7 +23,7 @@ void Win::clicked_choose() {
     if (!(path_.isEmpty())) {
         this->photo_processing();
         if (!(this->is_error())) {
-            //Вызов выбора типа
+            //Вызов выбора типа графика
             AnotherWin AnWin;
             AnWin.set_data(get_data());
             AnWin.show();
@@ -82,8 +82,8 @@ void Win::photo_processing() {
            }
        }
     }
-    QMessageBox::information(this, tr("Input"),
-        tr("Input is: \n") + QString::fromStdString(outText));
+    //QMessageBox::information(this, tr("Input"),
+       // tr("Input is: \n") + QString::fromStdString(outText));
 
     std::string x, y, tmp;
     std::vector<double> x_vec, y_vec;
@@ -151,6 +151,13 @@ void AnotherWin::clicked_linear() {
 }
 
 void AnotherWin::clicked_log() {
+    for (int i = 0; i < data_.first.size(); i++) {
+        if (data_.first[i] <= 0 || data_.second[i] <= 0) {
+            QMessageBox::information(this, tr("Error"),
+                tr("Logarithmic scale grapth can`t be built using negative numbers"));
+            return;
+        }
+    }
     drawer object;
     object.set_log();
     object.cicle(data_.first, data_.second);

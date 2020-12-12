@@ -39,7 +39,6 @@ class AnotherWin : public QDialog {
 	Q_OBJECT
 public:
 	AnotherWin(QWidget* parent = 0);
-	//friend std::pair<std::vector<double>, std::vector<double>> Win::get_data();
 public slots:
 	void clicked_linear();
 	void clicked_log();
