@@ -277,7 +277,7 @@ double drawer::calculate_point_y_log(const std::vector<std::pair<double, double>
                 start = y_size / count_marker_y * (count_marker_y / 2 - u);
             }
             else {
-                start = y_size / count_marker_y * (count_marker_y / 2 - u + 1);
+                start = y_size / count_marker_y * (count_marker_y / 2 + u - 2);
             }
             break;
         }
