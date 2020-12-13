@@ -90,7 +90,7 @@ script:
   - cd /usr/src/googletest/googletest
   - sudo mkdir build
   - cd build
-  - cmake ..
+  - sudo cmake ..
   - sudo make
   - sudo cp libgtest* /usr/lib/
   - cd ..
@@ -98,8 +98,8 @@ script:
   - sudo mkdir /usr/local/lib/googletest
   - sudo ln -s /usr/lib/libgtest.a /usr/local/lib/googletest/libgtest.a
   - sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/googletest/libgtest_main.a
-  ######################## build main ################################### 
-  - cd 
+  - cd /home/travis/build/AntonGrigorev/KP
+  ######################## build main ###################################  
   - mkdir build && cd build
   - cmake ..
   - cmake --build . --config Release
