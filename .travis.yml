@@ -88,6 +88,6 @@ script:
   ######################## build main ################################### 
   
   - mkdir build && cd build
-  - cmake ..
+  - cmake -DBUILD_TESTS=ON ..
   - cmake --build . --config Release
   - echo "Main application testing is done"
