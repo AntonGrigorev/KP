@@ -36,13 +36,16 @@ class drawer {
     std::vector<double> y_vec;
     std::vector<std::pair<double, double>> coordinates;
 
+    bool test = false;
     bool linear = false;
     bool log = false;
+
+    sf::RenderWindow window;
 public:
     void cicle(const std::vector<double>& x_vec_, const std::vector<double>& y_vec_);
     void set_limits_lin();
     void set_limits_log();
-    void draw_plate(sf::RenderWindow& window); 
+    void draw_plate(sf::RenderWindow& window);
     void draw_curve(sf::RenderWindow& window);
     void calculate_scaling_lin();
     void calculate_scaling_log(const double& max, const double& min);
@@ -56,6 +59,9 @@ public:
     void set_count_marker_log();
     void set_linear();
     void set_log();
+    void set_test();
+    void close_graph();
+    double get_limit_x0();
 };
 
 #endif // INCLUDE_DRAWER_HPP_

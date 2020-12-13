@@ -6,25 +6,30 @@ void drawer::cicle(const std::vector<double>& x_vec_, const std::vector<double>&
     for (int i = 0; i < x_vec.size(); i++) {
         coordinates.push_back(std::make_pair(x_vec[i], y_vec[i]));
     }
-    sf::RenderWindow window(sf::VideoMode(x_size, y_size), "Function plot");
+    window.create(sf::VideoMode(x_size, y_size), "Function plot");
     if (linear == true) {
         set_limits_lin();
         set_count_marker_linear();
         set_step_lin();
+        calculate_scaling_lin();
     }
     else {
         set_limits_log();
         set_count_marker_log();
         set_step_log();
     }
-    while (window.isOpen()) {
-        sf::Event event;
+    sf::Event event;
+    while (window.isOpen()) {      
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
         draw_plate(window);
         draw_curve(window);
+        if (test == true) {
+            close_graph();
+            test = false;
+        }
         window.display();
     }
 }
@@ -197,7 +202,6 @@ void drawer::draw_plate(sf::RenderWindow& window) {
 }
 
 void drawer::draw_curve(sf::RenderWindow& window) {
-    calculate_scaling_lin();
     sf::Color color_graph(255, 0, 0);
     if (linear == true) {
         for (int i = 0; i < coordinates.size(); i++) {
@@ -299,6 +303,19 @@ void drawer::calculate_scaling_log(const double& max, const double& min) {
 void drawer::set_linear() {
     linear = true;
 }
+
 void drawer::set_log() {
     log = true;
+}
+
+void drawer::set_test() {
+    test = true;
+}
+
+void drawer::close_graph() {
+    window.close();
+}
+
+double drawer::get_limit_x0(){
+    return limit_x0;
 }
