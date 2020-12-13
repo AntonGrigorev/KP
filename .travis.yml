@@ -90,7 +90,7 @@ script:
   - cd /usr/src/googletest/googletest
   - sudo mkdir build
   - cd build
-  - sudo cmake ..
+  - cmake ..
   - sudo make
   - sudo cp libgtest* /usr/lib/
   - cd ..
@@ -99,7 +99,7 @@ script:
   - sudo ln -s /usr/lib/libgtest.a /usr/local/lib/googletest/libgtest.a
   - sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/googletest/libgtest_main.a
   ######################## build main ################################### 
-  
+  - cd 
   - mkdir build && cd build
   - cmake ..
   - cmake --build . --config Release
