@@ -85,7 +85,7 @@ if(WIN32)
  target_link_libraries(unittest PRIVATE sfml-system sfml-window sfml-graphics)
 
 endif(WIN32)
-if (BUILD_TESTS)
- enable_testing()
- add_test(NAME unit_tests COMMAND tests) 
-endif()
+
+enable_testing()
+add_test(NAME unit_tests COMMAND tests) 
+
