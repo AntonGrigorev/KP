@@ -12,11 +12,12 @@ option(BUILD_TESTS "Build tests" OFF)
 find_package(SFML REQUIRED COMPONENTS system window graphics)
 find_package(Qt5Gui CONFIG REQUIRED)
 find_package(Qt5Widgets CONFIG REQUIRED)
-find_package(GTest CONFIG REQUIRED)
+#find_package(GTest CONFIG REQUIRED)
 
 
 if(WIN32)
    find_package(Tesseract CONFIG REQUIRED)
+
 endif(WIN32)
    
 if(UNIX AND NOT APPLE)
@@ -27,31 +28,28 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 add_library(unittest STATIC
-  # enum your files and delete this comment
-  ${CMAKE_CURRENT_SOURCE_DIR}/source/drawer.cpp
-)
+  ${CMAKE_CURRENT_SOURCE_DIR}/source/drawer.cpp)
 
 add_executable(main
 ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/source/ui.cpp
 ${CMAKE_CURRENT_SOURCE_DIR}/source/drawer.cpp)
 
-add_executable(tests
-${CMAKE_CURRENT_SOURCE_DIR}/tests/tests.cpp
-)
+#add_executable(tests
+#${CMAKE_CURRENT_SOURCE_DIR}/tests/tests.cpp)
 
 
 target_include_directories(main
 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_include_directories(tests
-PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+#target_include_directories(tests
+#PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_include_directories(unittest
 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
-target_link_libraries(tests PRIVATE GTest::gmock GTest::gtest GTest::gmock_main GTest::gtest_main unittest)
+#target_link_libraries(tests PRIVATE GTest::gmock GTest::gtest GTest::gmock_main GTest::gtest_main unittest)
 
 
 ################### Linux  ###############################
@@ -71,7 +69,7 @@ if(UNIX AND NOT APPLE)
 
  target_link_libraries(unittest PRIVATE ${SFML_LIBRARIES})
  target_link_libraries(unittest -lsfml-graphics -lsfml-window -lsfml-system)
- endif(UNIX AND NOT APPLE)
+endif(UNIX AND NOT APPLE)
 
 ################### WIN ##################################
 
@@ -82,10 +80,17 @@ if(WIN32)
  ##?#target_link_libraries(main PRIVATE ${Qt5Gui_LIBRARIES})
  target_link_libraries(main PRIVATE ${Qt5Gui_LIBRARIES})
 
- target_link_libraries(unittest PRIVATE sfml-system sfml-window sfml-graphics)
-
+ #target_link_libraries(unittest PRIVATE sfml-system sfml-window sfml-graphics)
 endif(WIN32)
 
-enable_testing()
-add_test(NAME unit_tests COMMAND tests) 
-
+#if(BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(third-party/gtest)
+  #file(GLOB $KP_TEST_SOURCES tests/tests.cpp)
+  add_executable(unit ${CMAKE_CURRENT_SOURCE_DIR}/tests/tests.cpp)
+  target_include_directories(unit 
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
+  target_link_libraries(unit PRIVATE unittest gtest_main)
+  add_test(NAME unit COMMAND unit)
+#endif()
