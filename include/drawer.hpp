@@ -9,6 +9,8 @@
 #define INCLUDE_DRAWER_HPP_
 
 class drawer {
+    sf::RenderWindow window;
+
 	unsigned int x_size = 800;
 	unsigned int y_size = 600;
     unsigned int marker_size = 3;
@@ -36,26 +38,38 @@ class drawer {
     std::vector<double> y_vec;
     std::vector<std::pair<double, double>> coordinates;
 
-    bool linear = false;
-    bool log = false;
+    bool linear_x = false;
+    bool log_x = false;
+    bool linear_y = false;
+    bool log_y = false;
 public:
     void cicle(const std::vector<double>& x_vec_, const std::vector<double>& y_vec_);
-    void set_limits_lin();
-    void set_limits_log();
+    void set_limit_x_lin();
+    void set_limit_y_lin();
+    void set_limit_x_log();
+    void set_limit_y_log();
     void draw_plate(sf::RenderWindow& window); 
     void draw_curve(sf::RenderWindow& window);
-    void calculate_scaling_lin();
-    void calculate_scaling_log(const double& max, const double& min);
+    void calculate_scaling_lin_x();
+    void calculate_scaling_lin_y();
+    void calculate_scaling_log_x(const double& max, const double& min);
+    void calculate_scaling_log_y(const double& max, const double& min);
     double calculate_point_x_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i);
     double calculate_point_y_lin(const std::vector<std::pair<double, double>>& coordinates, const int& i);
     double calculate_point_x_log(const std::vector<std::pair<double, double>>& coordinates, const int& i);
     double calculate_point_y_log(const std::vector<std::pair<double, double>>& coordinates, const int& i);
-    void set_step_lin();
-    void set_step_log();
-    void set_count_marker_linear();
-    void set_count_marker_log();
-    void set_linear();
-    void set_log();
+    void set_step_lin_x();
+    void set_step_lin_y();
+    void set_step_log_x();
+    void set_step_log_y();
+    void set_count_marker_x_linear();
+    void set_count_marker_y_linear();
+    void set_count_marker_x_log();
+    void set_count_marker_y_log();
+    void set_linear_x();
+    void set_linear_y();
+    void set_log_x();
+    void set_log_y();
 };
 
 #endif // INCLUDE_DRAWER_HPP_

@@ -42,11 +42,15 @@ public:
 public slots:
 	void clicked_linear();
 	void clicked_log();
+	void clicked_linlog();
+	void clicked_loglin();
 	void set_data(const std::pair<std::vector<double>, std::vector<double>>& data1);
 private:
 	QLabel* label1;
 	QPushButton* linearButton;
 	QPushButton* logButton;
+	QPushButton* linlogButton;
+	QPushButton* loglinButton;
 	std::pair<std::vector<double>, std::vector<double>> data_;
 };
 
