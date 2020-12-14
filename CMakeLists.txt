@@ -46,7 +46,7 @@ if(UNIX AND NOT APPLE)
 
  target_link_libraries(main PRIVATE ${Leptonica_LIBRARIES})
  target_link_libraries(main PRIVATE ${Tesseract_LIBRARIES})
- target_link_libraries(main PRIVATE ${SFML_LIBRARIES})
+ #target_link_libraries(main PRIVATE ${SFML_LIBRARIES})
  target_link_libraries(main -llept -ltesseract -lQt5Widgets -lQt5Gui -lQt5Core -lsfml-graphics -lsfml-window -lsfml-system)
  endif(UNIX AND NOT APPLE)
 
