@@ -23,13 +23,13 @@ class drawer {
     double limit_y0 = 0;
     double limit_y1 = 0;
 
-	double step_x_lin = 0;
-	double step_y_lin = 0;
-    std::array<double, 4> step_x_log;
-    std::array<double, 4> step_y_log;
+    double step_x_lin = 0;
+    double step_y_lin = 0;
+    std::array<int, 4> step_x_log;
+    std::array<int, 4> step_y_log;
 
-    double count_marker_y = 0;
-    double count_marker_x = 0;
+    int count_marker_y = 0;
+    int count_marker_x = 0;
 
     double scaling_factor_x = 0;
     double scaling_factor_y = 0;
