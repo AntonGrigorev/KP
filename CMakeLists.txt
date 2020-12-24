@@ -28,8 +28,9 @@ endif(UNIX AND NOT APPLE)
 
 add_executable(main
 ${CMAKE_CURRENT_SOURCE_DIR}/source/main.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/source/ui.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/source/drawer.cpp)
+${CMAKE_CURRENT_SOURCE_DIR}/source/win.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/source/drawer.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/source/anotherwin.cpp)
 
 
 target_include_directories(main

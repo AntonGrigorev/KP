@@ -4,7 +4,7 @@
 #include <string>
 #include <exception>
 #include <drawer.hpp>
-#include <ui.hpp>
+#include <win.hpp>
 #include <QApplication>
 
 int main(int argc, char* argv[]) {
